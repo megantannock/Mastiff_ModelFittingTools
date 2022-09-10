@@ -1,0 +1,4 @@
+lte017-4.0-0.0a+0.0.BT-Settl.spec.7
+lte017-4.5-0.0a+0.0.BT-Settl.spec.7
+lte017-5.0-0.0a+0.0.BT-Settl.spec.7
+lte017-5.5-0.0a+0.0.BT-Settl.spec.7
