@@ -1,0 +1,6 @@
+sp_t1200g1000nc_m0.0
+sp_t1200g100nc_m0.0
+sp_t1200g1780nc_m0.0
+sp_t1200g178nc_m0.0
+sp_t1200g3160nc_m0.0
+sp_t1200g316nc_m0.0
