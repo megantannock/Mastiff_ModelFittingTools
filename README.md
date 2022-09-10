@@ -2,15 +2,19 @@
 
 Hello! Welcome to MASTIFF - a tool for fitting model spectra to observed spectra
 by Megan Tannock
+
 Contact: mtannock@uwo.ca
 
 If you make use of these codes, please cite the following two publications:
+ 
  Tannock M. E., et al., 2021, AJ, 161, 224
+ 
  Tannock M. E., et al., 2022, MNRAS, 514, 3160
 
 The IDL Codes required for this tool are all contained in the IDLCodes/ directory inside of
 the Mastiff_ModelFittingTools/ directory. You will also need the IDL Astronomy User's Library
 which is available at this website:
+
 https://idlastro.gsfc.nasa.gov/
 
 You should place all of these IDL codes in your IDLWorkspace directory, and ensure they are
