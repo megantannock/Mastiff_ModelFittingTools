@@ -1,6 +1,7 @@
 # Mastiff_ModelFittingTools
 
 Hello! Welcome to MASTIFF - a tool for fitting model spectra to observed spectra
+
 by Megan Tannock
 
 Contact: mtannock@uwo.ca
