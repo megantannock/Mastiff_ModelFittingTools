@@ -80,9 +80,11 @@ pro savebestmodel_final, configfilepathandname
   outfilename = objectname + '_' + rundate + '_' + wavelengthregionname
 
   print, 'savebestmodel_final.pro: Reading ' + outfilepath + inputfilename
-  fmt = 'A,I,F,I,D,D,D,D,D' ; format of filename
-  readcol, outfilepath + inputfilename, FORMAT = fmt, bestmodelname, bestT, bestlogg, bestf, bestchi, bestdof, bestredchi, bestvsini, bestrvshift, /SILENT, COMMENT='#' ; Read in the data
-
+  ;fmt = 'A,I,F,I,D,D,D,D,D' ; format of filename
+  ;readcol, outfilepath + inputfilename, FORMAT = fmt, bestmodelname, bestT, bestlogg, bestf, bestchi, bestdof, bestredchi, bestvsini, bestrvshift, /SILENT, COMMENT='#' ; Read in the data
+  fmt = 'A,I,F,I,I,D,D,D,D,D,D,D,D' ; format of filename
+  readcol, outfilepath + inputfilename, FORMAT = fmt, bestmodelname, bestT, bestlogg, bestf, bestk, bestchi, bestdof, bestredchi, bestvsini, bestrvshift, bestqa, bestqb, bestqc, /SILENT, COMMENT='#' ; Read in the data
+  ;# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c
   bestindex = where(bestchi eq min(bestchi))
 
   print, 'best model: ' + bestmodelname[bestindex] + ', vsini=' + strtrim(bestvsini[bestindex],1) + ', rv=' + strtrim(bestrvshift[bestindex],1) + ', redchisquare=' + strtrim(bestredchi[bestindex],1)
@@ -145,7 +147,7 @@ pro savebestmodel_final, configfilepathandname
     readcol, psgpath + ohfilename, FORMAT = fmt, inohlam, inohstrength, COMMENT='#' ; Read in the data
     inohlam = inohlam / 10000. ; convert Angstroms to um
 
-    mask =  maketelluricmask_final(intransmittance, inpsglam, inohstrength, inohlam, datavalues[*,1], datavalues[*,0], bcv, masktellurics/100., slitwidth)
+    mask =  maketelluricmask_final(intransmittance, inpsglam, inohstrength, inohlam, datavalues[*,1], datavalues[*,0], bcv, masktellurics/100., slitwidth, objectname)
     ; mask is an array of 1s and NaNs
 
     ; multiply the flux by the mask

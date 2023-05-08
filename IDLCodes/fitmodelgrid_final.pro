@@ -298,7 +298,7 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
     readcol, psgpath + ohfilename, FORMAT = fmt, inohlam, inohstrength, COMMENT='#' ; Read in the data
     inohlam = inohlam / 10000. ; convert Angstroms to um
 
-    mask =  maketelluricmask_final(intransmittance, inpsglam, inohstrength, inohlam, datavalues[*,1], datavalues[*,0], bcv, masktellurics/100., slitwidth)
+    mask =  maketelluricmask_final(intransmittance, inpsglam, inohstrength, inohlam, datavalues[*,1], datavalues[*,0], bcv, masktellurics/100., slitwidth, objectname)
     ; mask is an array of 1s and NaNs
 
     ; multiply the flux by the mask
@@ -306,7 +306,6 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
     datavalues[*,2] = datavalues[*,2] * mask ; mask the uncertainty
 
   ENDELSE
-
 
 
   ;;;;;;;;;
@@ -390,7 +389,8 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
       printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       slope        intercept       offset'
     end
     'Quadratic': begin
-        printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c'
+        ;printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c'
+      printf, lun, '# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c'
     end
     'QuadraticAndOffset': begin
         printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c       offset'
@@ -531,9 +531,10 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
               constants[0], constants[1], constants[2]
           end 
           'Quadratic': begin
-            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', $
+            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', trim(modelparams[3]), '    ', $
               chisquarevalue, dof, reducedchisquarevalue, vsinis[v], '  ', shifts[s], ' ', $
               constants[0], constants[1], constants[2]
+              ;printf, lun, '# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c'
           end
           'QuadraticAndOffset': begin
             printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', $
