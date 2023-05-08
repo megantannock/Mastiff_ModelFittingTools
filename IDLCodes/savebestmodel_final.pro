@@ -38,7 +38,7 @@ pro savebestmodel_final, configfilepathandname
   ; for config file: must put the file containing the names of the models (modelnamesfile)
   ;                  to be used in the same directory as the config file
   ; get the keywords from the configuration file
-  keywords = readconfigfile(configfilepathandname, /silent)
+  keywords = readconfigfile_final(configfilepathandname, /silent)
 
   ; set the parameters for use in these codes
   ; could just index the paratmeters variable, but I did this to avoid any confusion or mistakes
