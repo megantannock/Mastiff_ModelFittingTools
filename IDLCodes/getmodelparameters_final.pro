@@ -146,6 +146,8 @@ function getmodelparameters_final, modeltype, modelfilename
 
       ; no f_sed value in the Alt-A models. Set to the placeholder value 0
       fsed = 0
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
 
     'BTSETTL-CIFIST2011': begin
