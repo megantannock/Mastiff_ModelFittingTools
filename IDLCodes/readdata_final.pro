@@ -57,8 +57,9 @@ function readdata_final, objectinstrument, objectpath, objectfilename, objecterr
 
     'IGRINS': begin
       ; for IGRINS targets
+      ; weighted-average spectra per order
       fmt = 'D,D,D,D' ; format of filename
-      readcol, objectpath + objectfilename, FORMAT = fmt, lam, flux, error, snr, COMMENT='#', skipline=317 ; Read in the data
+      readcol, objectpath + objectfilename, FORMAT = fmt, lam, flux, error, snr, COMMENT='#', skipline=0 ; Read in the data
       slitwidth = 4 ; pixels (actually 3.6, but we'll round up)
     end
 

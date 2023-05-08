@@ -72,6 +72,8 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'_',/EXTRACT)
       fsed = split[0]
       fsed = uint(fsed)
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
 
 
@@ -97,6 +99,8 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'_',/EXTRACT)
       fsed = split[0]
       fsed = uint(fsed)
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
 
     'SONORA-BOBCAT': begin
@@ -119,6 +123,8 @@ function getmodelparameters_final, modeltype, modelfilename
 
       ; no f_sed value in the Sonora models. Set to the placeholder value of 0
       fsed = 0
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
     
     'BOBCAT-ALTA': begin
@@ -170,11 +176,91 @@ function getmodelparameters_final, modeltype, modelfilename
 
       ; no f_sed value in the Allard models. Set to the placeholder value 0
       fsed = 0
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
+    
+    'CallieCloudy': begin
+      ;Callie's file names are similar to Sonora
+
+      ; example filename: 't1400g316f2_m0.0_co1.0.spec'
+      ; also have a non-cloudy case: 't1700g100nc_m0.0_co1.0.spec'
+      ; parameters are temperature, gravity g
+
+      ;;;;;;;;;;;;;;;;;;;;;;;;
+      ; Temperature
+      split = STRSPLIT(modelfilename,'t',/EXTRACT)
+      split = STRSPLIT(split[0],'g',/EXTRACT)
+      temperature = split[0]
+      temperature = uint(temperature)
+
+      ; gravity g
+      split = STRSPLIT(split[1],'n',/EXTRACT)
+      g = split[0]
+      g = uint(g)
+
+      ; fsed
+      split = STRSPLIT(modelfilename,'f',/EXTRACT)
+      if split[0] eq modelfilename then begin
+        ; non cloudy case, set fsed to 0
+        fsed = 0
+      endif else begin
+        split = STRSPLIT(split[1],'_',/EXTRACT)
+        fsed = split[0]
+        fsed = uint(fsed)
+      endelse
+
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
+
+    end ; end CallieCloudy
+    
+    'CallieDisEq': begin
+
+      ; example filenames:
+      ;     't1300g316f3.0kzz.spec'
+      ;     't1300g316f3.0kzz1m1.spec'
+      ;     't1300g316f3.0kzz1p2.spec'
+      ; parameters are t, g, f, kzz
+
+      ;;;;;;;;;;;;;;;;;;;;;;;;
+      ; Temperature
+      split = STRSPLIT(modelfilename,'t',/EXTRACT)
+      split = STRSPLIT(split[0],'g',/EXTRACT)
+      temperature = split[0]
+      temperature = uint(temperature)
+
+      ; gravity g
+      split = STRSPLIT(split[1],'n',/EXTRACT)
+      g = split[0]
+      g = uint(g)
+
+      ; fsed
+      split = STRSPLIT(modelfilename,'f',/EXTRACT)
+      if split[0] eq modelfilename then begin
+        ; non cloudy case, set fsed to 0
+        fsed = 0
+      endif else begin
+        split = STRSPLIT(split[1],'_',/EXTRACT)
+        fsed = split[0]
+        fsed = uint(fsed)
+      endelse
+
+      ; kzz
+      split = STRSPLIT(modelfilename,'kzz',/EXTRACT)
+      if (split[1] eq '.spec') then begin
+        kzz = 1
+      endif else if (split[1] eq '1p2.spec') then begin
+        kzz = 2
+      endif else if (split[1] eq '1m1.spec') then begin
+        kzz = 3
+      endif
+
+    end ; end CallieDisEq
 
   ENDCASE
 
-  values = [temperature, g, fsed]
+  values = [temperature, g, fsed, kzz]
   return, values
 
 end

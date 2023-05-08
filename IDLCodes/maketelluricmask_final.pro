@@ -38,8 +38,17 @@
 ;    mask = maketelluricmask_final(intransmittance, inpsglam, inohstrength, inohlam, dataflux, datalam, -10.1, 30, 4)
 ;
 
-function maketelluricmask_final, transmittance, psglam, ohstrength, ohlam, dataflux, datalam, bcv, threshold, slitwidth
+function maketelluricmask_final, transmittance, psglam, ohstrength, ohlam, dataflux, datalam, bcv, threshold, slitwidth, objectname
   c = 2.99792458d5 ; km/s - speed of light
+  
+  ; custom per-target shifting (due to RV)
+  if (objectname eq 'Luhman16A') then begin
+    extrashift = -3
+  endif else if (objectname eq 'Luhman16B') then begin
+    extrashift = -3
+  endif else begin
+    extrashift = 0
+  endelse
 
   ; make a copy of everything to use below - don't want to overwrite it
   transmittancecopy = transmittance
@@ -59,11 +68,20 @@ function maketelluricmask_final, transmittance, psglam, ohstrength, ohlam, dataf
   ; make the mask
   telluricmask = (datalamcopy * 0. ) + 1.0 ; make an array of 1s the same length as your datalam array to fill in
   telluricmaskindex = where(transmittanceout le threshold) ; get the indices of everywhere the transmittance goes below your threshold
+  telluricmaskindex = telluricmaskindex + extrashift
   telluricmask[telluricmaskindex] = !VALUES.F_NAN ; make those values NaN
   telluricmask[telluricmaskindex-1] = !VALUES.F_NAN ; mask a couple extra pixels
   telluricmask[telluricmaskindex-2] = !VALUES.F_NAN ; mask a couple extra pixels
+  ;telluricmask[telluricmaskindex+1] = !VALUES.F_NAN ; mask a couple extra pixels
+  ;telluricmask[telluricmaskindex+2] = !VALUES.F_NAN ; mask a couple extra pixels
+  telluricmask[telluricmaskindex-3] = !VALUES.F_NAN ; mask a couple extra pixels
+  telluricmask[telluricmaskindex-4] = !VALUES.F_NAN ; mask a couple extra pixels
+  telluricmask[telluricmaskindex-5] = !VALUES.F_NAN ; mask a couple extra pixels
+  ; extra
   telluricmask[telluricmaskindex+1] = !VALUES.F_NAN ; mask a couple extra pixels
+  telluricmask[telluricmaskindex-6] = !VALUES.F_NAN ; mask a couple extra pixels
   telluricmask[telluricmaskindex+2] = !VALUES.F_NAN ; mask a couple extra pixels
+  telluricmask[telluricmaskindex-7] = !VALUES.F_NAN ; mask a couple extra pixels
 
   ; We also need to mask the OH emission lines:
 
@@ -89,6 +107,7 @@ function maketelluricmask_final, transmittance, psglam, ohstrength, ohlam, dataf
   ohmaska = (datalamcopy * 0.) + 1. ; make a mask we'll fill in for the OH lines mask
   for lines=0,n_elements(indices)-1 do begin
     index = indices[lines]
+    index = index + extrashift
     if (index gt slitwidth) and (index lt (n_elements(datalamcopy)-slitwidth) ) then ohmaska[index-slitwidth:index+slitwidth] = !VALUES.F_NAN
   endfor
 
