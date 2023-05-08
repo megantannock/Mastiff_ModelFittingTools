@@ -1,4 +1,9 @@
+Examples/* linguist-documentation
+PSG/* linguist-documentation
+ExampleFitting1/* linguist-documentation
+ExampleFitting2/* linguist-documentation
 *.pro linguist-language=IDL
+*.pdf linguist-documentation
 *.0 linguist-documentation
 *.1 linguist-documentation
 *.2 linguist-documentation
