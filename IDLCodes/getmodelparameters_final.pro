@@ -22,9 +22,10 @@
 ; RETURNS:
 ;    values - a three-component vector of [temperature, logg, fsed].
 ;          Where temperature is the effective temperature of the model 
-;          in Kelvin, logg is the log(g) of the model, where g is in 
-;          the units below. fsed is the sedimentation efficiency, and
-;          defaults to fsed = 0 if the model family does not include fsed.
+;          in Kelvin, logg is the log(g) of the model, where g is in units
+;          of cm/s/s. The unit shown in each model family is below. fsed is
+;          the sedimentation efficiency, and defaults to fsed = 0 if the 
+;          model family does not include fsed.
 ;          
 ;          g units: MORLEY: m/s/s
 ;                   SAUMON: m/s/s
@@ -67,6 +68,8 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'f',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(x * 100.) ; in log10(cm/s/s)
+
 
       ; f_sed
       split = STRSPLIT(split[1],'_',/EXTRACT)
@@ -94,6 +97,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'f',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(x * 100.) ; in log10(cm/s/s)
 
       ; f_sed
       split = STRSPLIT(split[1],'_',/EXTRACT)
@@ -120,6 +124,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(x * 100.) ; in log10(cm/s/s)
 
       ; no f_sed value in the Sonora models. Set to the placeholder value of 0
       fsed = 0
@@ -143,6 +148,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(x * 100.) ; in log10(cm/s/s)
 
       ; no f_sed value in the Alt-A models. Set to the placeholder value 0
       fsed = 0
@@ -174,7 +180,7 @@ function getmodelparameters_final, modeltype, modelfilename
       ; log(g) where g is in units of cm/s/s
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
-      g = float(g) ; this is log(g)
+      g = float(g) ; this is already in log(g [cm/s/s])
 
       ; no f_sed value in the Allard models. Set to the placeholder value 0
       fsed = 0
@@ -200,6 +206,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(x * 100.) ; in log10(cm/s/s)
 
       ; fsed
       split = STRSPLIT(modelfilename,'f',/EXTRACT)
@@ -236,6 +243,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(x * 100.) ; in log10(cm/s/s)
 
       ; fsed
       split = STRSPLIT(modelfilename,'f',/EXTRACT)
