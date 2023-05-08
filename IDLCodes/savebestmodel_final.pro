@@ -82,8 +82,8 @@ pro savebestmodel_final, configfilepathandname
   print, 'savebestmodel_final.pro: Reading ' + outfilepath + inputfilename
   ;fmt = 'A,I,F,I,D,D,D,D,D' ; format of filename
   ;readcol, outfilepath + inputfilename, FORMAT = fmt, bestmodelname, bestT, bestlogg, bestf, bestchi, bestdof, bestredchi, bestvsini, bestrvshift, /SILENT, COMMENT='#' ; Read in the data
-  fmt = 'A,I,F,I,I,D,D,D,D,D,D,D,D' ; format of filename
-  readcol, outfilepath + inputfilename, FORMAT = fmt, bestmodelname, bestT, bestlogg, bestf, bestk, bestchi, bestdof, bestredchi, bestvsini, bestrvshift, bestqa, bestqb, bestqc, /SILENT, COMMENT='#' ; Read in the data
+  fmt = 'A,I,F,I,I,D,D,D,D,D' ; format of filename
+  readcol, outfilepath + inputfilename, FORMAT = fmt, bestmodelname, bestT, bestlogg, bestf, bestk, bestchi, bestdof, bestredchi, bestvsini, bestrvshift, /SILENT, COMMENT='#' ; Read in the data
   ;# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c
   bestindex = where(bestchi eq min(bestchi))
 
