@@ -359,7 +359,7 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
   ; MAKE OUTPUT FILE TO PUT THE REDUCED CHI SQUARE FITTING INFORMATION IN, for each region.
   ; There is a single output file for each region, instead of one file with many regions
   ; We're just setting up the column headers here. Information to be added below.
-  openw,lun, outfilepath + objectname + '_' + rundate + '_' +wavelengthregionname + '.dat', /get_lun, WIDTH=250, /APPEND
+  openw,lun, outfilepath + objectname + '_' + rundate + '_' +wavelengthregionname + '.dat', /get_lun, WIDTH=250 ; Created anew (overwriting)
   printf, lun, '# Config file was: ' + configfilepathandname
   printf, lun, '# Input keywords were: ' + configfilepathandname
   FOR i = 0, n_elements(keywords)-1 DO printf, lun, '#     ' + keywords[i]
