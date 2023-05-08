@@ -68,7 +68,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'f',/EXTRACT)
       g = split[0]
       g = uint(g)
-      g = alog10(x * 100.) ; in log10(cm/s/s)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
 
 
       ; f_sed
@@ -97,7 +97,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'f',/EXTRACT)
       g = split[0]
       g = uint(g)
-      g = alog10(x * 100.) ; in log10(cm/s/s)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
 
       ; f_sed
       split = STRSPLIT(split[1],'_',/EXTRACT)
@@ -124,7 +124,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
-      g = alog10(x * 100.) ; in log10(cm/s/s)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
 
       ; no f_sed value in the Sonora models. Set to the placeholder value of 0
       fsed = 0
@@ -148,7 +148,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
-      g = alog10(x * 100.) ; in log10(cm/s/s)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
 
       ; no f_sed value in the Alt-A models. Set to the placeholder value 0
       fsed = 0
@@ -206,7 +206,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
-      g = alog10(x * 100.) ; in log10(cm/s/s)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
 
       ; fsed
       split = STRSPLIT(modelfilename,'f',/EXTRACT)
@@ -243,7 +243,7 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
-      g = alog10(x * 100.) ; in log10(cm/s/s)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
 
       ; fsed
       split = STRSPLIT(modelfilename,'f',/EXTRACT)
