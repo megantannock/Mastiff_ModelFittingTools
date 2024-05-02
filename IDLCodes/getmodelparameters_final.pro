@@ -22,9 +22,10 @@
 ; RETURNS:
 ;    values - a three-component vector of [temperature, logg, fsed].
 ;          Where temperature is the effective temperature of the model 
-;          in Kelvin, logg is the log(g) of the model, where g is in 
-;          the units below. fsed is the sedimentation efficiency, and
-;          defaults to fsed = 0 if the model family does not include fsed.
+;          in Kelvin, logg is the log(g) of the model, where g is in units
+;          of cm/s/s. The unit shown in each model family is below. fsed is
+;          the sedimentation efficiency, and defaults to fsed = 0 if the 
+;          model family does not include fsed.
 ;          
 ;          g units: MORLEY: m/s/s
 ;                   SAUMON: m/s/s
@@ -67,11 +68,15 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'f',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
+
 
       ; f_sed
       split = STRSPLIT(split[1],'_',/EXTRACT)
       fsed = split[0]
       fsed = uint(fsed)
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
 
 
@@ -92,11 +97,14 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'f',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
 
       ; f_sed
       split = STRSPLIT(split[1],'_',/EXTRACT)
       fsed = split[0]
       fsed = uint(fsed)
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
 
     'SONORA-BOBCAT': begin
@@ -116,9 +124,12 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
 
       ; no f_sed value in the Sonora models. Set to the placeholder value of 0
       fsed = 0
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
     
     'BOBCAT-ALTA': begin
@@ -137,9 +148,12 @@ function getmodelparameters_final, modeltype, modelfilename
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
       g = uint(g)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
 
       ; no f_sed value in the Alt-A models. Set to the placeholder value 0
       fsed = 0
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
 
     'BTSETTL-CIFIST2011': begin
@@ -166,15 +180,97 @@ function getmodelparameters_final, modeltype, modelfilename
       ; log(g) where g is in units of cm/s/s
       split = STRSPLIT(split[1],'n',/EXTRACT)
       g = split[0]
-      g = float(g) ; this is log(g)
+      g = float(g) ; this is already in log(g [cm/s/s])
 
       ; no f_sed value in the Allard models. Set to the placeholder value 0
       fsed = 0
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
     end
+    
+    'CallieCloudy': begin
+      ;Callie's file names are similar to Sonora
+
+      ; example filename: 't1400g316f2_m0.0_co1.0.spec'
+      ; also have a non-cloudy case: 't1700g100nc_m0.0_co1.0.spec'
+      ; parameters are temperature, gravity g
+
+      ;;;;;;;;;;;;;;;;;;;;;;;;
+      ; Temperature
+      split = STRSPLIT(modelfilename,'t',/EXTRACT)
+      split = STRSPLIT(split[0],'g',/EXTRACT)
+      temperature = split[0]
+      temperature = uint(temperature)
+
+      ; gravity g
+      split = STRSPLIT(split[1],'n',/EXTRACT)
+      g = split[0]
+      g = uint(g)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
+
+      ; fsed
+      split = STRSPLIT(modelfilename,'f',/EXTRACT)
+      if split[0] eq modelfilename then begin
+        ; non cloudy case, set fsed to 0
+        fsed = 0
+      endif else begin
+        split = STRSPLIT(split[1],'_',/EXTRACT)
+        fsed = split[0]
+        fsed = uint(fsed)
+      endelse
+
+      ; no kzz value. Set to the placeholder value 0
+      kzz = 0
+
+    end ; end CallieCloudy
+    
+    'CallieDisEq': begin
+
+      ; example filenames:
+      ;     't1300g316f3.0kzz.spec'
+      ;     't1300g316f3.0kzz1m1.spec'
+      ;     't1300g316f3.0kzz1p2.spec'
+      ; parameters are t, g, f, kzz
+
+      ;;;;;;;;;;;;;;;;;;;;;;;;
+      ; Temperature
+      split = STRSPLIT(modelfilename,'t',/EXTRACT)
+      split = STRSPLIT(split[0],'g',/EXTRACT)
+      temperature = split[0]
+      temperature = uint(temperature)
+
+      ; gravity g
+      split = STRSPLIT(split[1],'n',/EXTRACT)
+      g = split[0]
+      g = uint(g)
+      g = alog10(g * 100.) ; in log10(cm/s/s)
+
+      ; fsed
+      split = STRSPLIT(modelfilename,'f',/EXTRACT)
+      if split[0] eq modelfilename then begin
+        ; non cloudy case, set fsed to 0
+        fsed = 0
+      endif else begin
+        split = STRSPLIT(split[1],'_',/EXTRACT)
+        fsed = split[0]
+        fsed = uint(fsed)
+      endelse
+
+      ; kzz
+      split = STRSPLIT(modelfilename,'kzz',/EXTRACT)
+      if (split[1] eq '.spec') then begin
+        kzz = 1
+      endif else if (split[1] eq '1p2.spec') then begin
+        kzz = 2
+      endif else if (split[1] eq '1m1.spec') then begin
+        kzz = 3
+      endif
+
+    end ; end CallieDisEq
 
   ENDCASE
 
-  values = [temperature, g, fsed]
+  values = [temperature, g, fsed, kzz]
   return, values
 
 end

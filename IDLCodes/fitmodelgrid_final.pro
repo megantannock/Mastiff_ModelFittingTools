@@ -298,7 +298,7 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
     readcol, psgpath + ohfilename, FORMAT = fmt, inohlam, inohstrength, COMMENT='#' ; Read in the data
     inohlam = inohlam / 10000. ; convert Angstroms to um
 
-    mask =  maketelluricmask_final(intransmittance, inpsglam, inohstrength, inohlam, datavalues[*,1], datavalues[*,0], bcv, masktellurics/100., slitwidth)
+    mask =  maketelluricmask_final(intransmittance, inpsglam, inohstrength, inohlam, datavalues[*,1], datavalues[*,0], bcv, masktellurics/100., slitwidth, objectname)
     ; mask is an array of 1s and NaNs
 
     ; multiply the flux by the mask
@@ -306,7 +306,6 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
     datavalues[*,2] = datavalues[*,2] * mask ; mask the uncertainty
 
   ENDELSE
-
 
 
   ;;;;;;;;;
@@ -360,7 +359,7 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
   ; MAKE OUTPUT FILE TO PUT THE REDUCED CHI SQUARE FITTING INFORMATION IN, for each region.
   ; There is a single output file for each region, instead of one file with many regions
   ; We're just setting up the column headers here. Information to be added below.
-  openw,lun, outfilepath + objectname + '_' + rundate + '_' +wavelengthregionname + '.dat', /get_lun, WIDTH=250, /APPEND
+  openw,lun, outfilepath + objectname + '_' + rundate + '_' +wavelengthregionname + '.dat', /get_lun, WIDTH=250 ; Created anew (overwriting)
   printf, lun, '# Config file was: ' + configfilepathandname
   printf, lun, '# Input keywords were: ' + configfilepathandname
   FOR i = 0, n_elements(keywords)-1 DO printf, lun, '#     ' + keywords[i]
@@ -375,25 +374,25 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
   printf, lun, '#'
   CASE scaletype OF
     'None': begin
-      printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)'
+      printf, lun, '# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)'
     end
     'Scale': begin
-      printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       scale'
+      printf, lun, '# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       scale'
     end
     'ScaleAndOffset': begin
-      printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       scale        offset'
+      printf, lun, '# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       scale        offset'
     end
     'Linear': begin
-      printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       slope        intercept'
+      printf, lun, '# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       slope        intercept'
     end
     'LinearAndOffset': begin
-      printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       slope        intercept       offset'
+      printf, lun, '# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       slope        intercept       offset'
     end
     'Quadratic': begin
-        printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c'
+      printf, lun, '# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c'
     end
     'QuadraticAndOffset': begin
-        printf, lun, '# Filename                                  T_eff             log(g)         f_sed             chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c       offset'
+        printf, lun, '# Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c       offset'
     end
   ENDCASE
   Free_lun, lun
@@ -418,7 +417,7 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
 
     ;;;;;;;;;
     ; GET THIS MODEL'S PARAMETERS from it's filename
-    modelparams = getmodelparameters_final(modeltype, modelnames[m]) ; modelparams = [temperature, g, fsed]
+    modelparams = getmodelparameters_final(modeltype, modelnames[m]) ; modelparams = [temperature, g, fsed, kzz]
 
     ;;;;;;;;;
     ; READ IN THE MODEL
@@ -507,36 +506,37 @@ pro fitmodelgrid_final, configfilepathandname, MAKEFIGURES = makefigures
         
         CASE scaletype OF
           'None': begin
-            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', $
+            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', trim(modelparams[3]), '    ', $
               chisquarevalue, dof, reducedchisquarevalue, vsinis[v], '  ', shifts[s]
           end
           'Scale': begin
-            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', $
+            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', trim(modelparams[3]), '    ', $
               chisquarevalue, dof, reducedchisquarevalue, vsinis[v], '  ', shifts[s], ' ', $
               constants[0]
           end
           'ScaleAndOffset': begin
-            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', $
+            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', trim(modelparams[3]), '    ', $
               chisquarevalue, dof, reducedchisquarevalue, vsinis[v], '  ', shifts[s], ' ', $
               constants[0], constants[1]
           end
           'Linear': begin
-            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', $
+            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', trim(modelparams[3]), '    ', $
               chisquarevalue, dof, reducedchisquarevalue, vsinis[v], '  ', shifts[s], ' ', $
               constants[0], constants[1]
           end
           'LinearAndOffset': begin
-            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', $
+            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', trim(modelparams[3]), '    ', $
               chisquarevalue, dof, reducedchisquarevalue, vsinis[v], '  ', shifts[s], ' ', $
               constants[0], constants[1], constants[2]
           end 
           'Quadratic': begin
-            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', $
+            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', trim(modelparams[3]), '    ', $
               chisquarevalue, dof, reducedchisquarevalue, vsinis[v], '  ', shifts[s], ' ', $
               constants[0], constants[1], constants[2]
+              ; # Filename                                  T_eff             log(g)         f_sed          kzz        chisquare       d.o.f.             reduchisquare    vsini(km/s)     rv(km/s)       a        b       c
           end
           'QuadraticAndOffset': begin
-            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', $
+            printf, lun, modelnames[m], '   ', trim(modelparams[0]), '    ', trim(modelparams[1]), '    ', trim(modelparams[2]), '    ', trim(modelparams[3]), '    ', $
               chisquarevalue, dof, reducedchisquarevalue, vsinis[v], '  ', shifts[s], ' ', $
               constants[0], constants[1], constants[2], constants[3]
           end         

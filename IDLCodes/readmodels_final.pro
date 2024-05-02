@@ -138,6 +138,38 @@ function readmodels_final, modeltype, modelpath, modelfilename
       modelflux = flux_cor
       modellam = lam / 10000. ; convert to microns
     end
+    
+    'CallieCloudy': begin
+      ; Callie's models should be the same as the Sonora models...
+
+      fmt = 'D,D' ; format of modelfilename
+      readcol, modelpath + modelfilename, FORMAT = fmt, modellam, modelflux, SKIPLINE=3, /SILENT ; Read in the data
+
+      ; !!!  models are backwards! Go from large lam to small lam! Reverse!!!
+      modellam = reverse(modellam)
+      modelflux = reverse(modelflux)
+
+      ; !!!  models are in Fnu units, I think...  files say W/m2/m
+      ; convert to Flambda (erg/cm^2/s/um) by multiplying by c / lambda^2
+      modelflux = modelflux * c / (modellam * modellam)
+
+    end
+    
+    'CallieDisEq': begin
+      ;
+
+      fmt = 'D,D' ; format of modelfilename
+      readcol, modelpath + modelfilename, FORMAT = fmt, modellam, modelflux, SKIPLINE=2, /SILENT ; Read in the data
+
+      ; !!!  models are backwards! Go from large lam to small lam! Reverse!!!
+      modellam = reverse(modellam)
+      modelflux = reverse(modelflux)
+
+      ; !!!  models are in Fnu units, I think...  files say W/m2/m
+      ; convert to Flambda (erg/cm^2/s/um) by multiplying by c / lambda^2
+      modelflux = modelflux * c / (modellam * modellam)
+
+    end
 
   ENDCASE
 

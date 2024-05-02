@@ -63,7 +63,7 @@ function broadenforvsini_final, modellam_in, modelflux_in, vsini, numkernels, li
     
   endif else begin
     
-    elements = n_elements(modellam)
+    elements = n_elements(modellam_in)
     modelflux_broadened = MAKE_ARRAY(elements,numkernels) * 0 ; make an array to fill in with the broadened spectra for each kernel
     width = uint(float(elements) / float(numkernels))
     indices = uint(ARRGEN(width/2., elements-(width/2.), nstep = numkernels)) ; figure out your indices for the kernel, make sure they are integers
